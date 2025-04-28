@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import SuggestionsList from './SuggestionsList';
+import MapPreview from './MapPreview';
 
 /**
  * A form field component for location search using Google Places API
@@ -17,6 +18,7 @@ import SuggestionsList from './SuggestionsList';
  * @param {string} props.label - The label for the field
  * @param {Array} props.suggestions - The array of quick location suggestions
  * @param {string} props.placeholder - The placeholder text for the input
+ * @param {string} props.coordinatesFieldName - Optional name of form field to store coordinates
  */
 export default function LocationFormField({
   form,
@@ -24,8 +26,11 @@ export default function LocationFormField({
   label,
   suggestions = [],
   placeholder = "Enter a location",
+  coordinatesFieldName,
 }) {
   const [loaded, setLoaded] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
+  const [showMap, setShowMap] = useState(false);
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
 
@@ -51,6 +56,14 @@ export default function LocationFormField({
     }
   }, []);
 
+  // Show map when a location is entered
+  useEffect(() => {
+    const location = form.getValues(name);
+    if (location && location.trim().length > 0) {
+      setShowMap(true);
+    }
+  }, [form, name]);
+
   // Initialize Google Places Autocomplete
   const initAutocomplete = () => {
     if (!inputRef.current) return;
@@ -69,6 +82,18 @@ export default function LocationFormField({
     if (place?.formatted_address) {
       form.setValue(name, place.formatted_address);
       form.trigger(name);
+      
+      // Store coordinates and show map
+      if (place.geometry?.location) {
+        const latLng = place.geometry.location.toJSON();
+        setCoordinates(latLng);
+        
+        // Save coordinates to form data if coordinatesFieldName is provided
+        if (coordinatesFieldName) {
+          form.setValue(coordinatesFieldName, latLng);
+        }
+      }
+      setShowMap(true);
     }
   };
 
@@ -76,6 +101,28 @@ export default function LocationFormField({
   const handleSuggestionSelect = (suggestion) => {
     form.setValue(name, suggestion);
     form.trigger(name);
+    setShowMap(true);
+    
+    // If we have a suggestion without exact coordinates, clear coordinates
+    // so the MapPreview will geocode the location
+    setCoordinates(null);
+    
+    // Clear coordinates in form data
+    if (coordinatesFieldName) {
+      form.setValue(coordinatesFieldName, null);
+      
+      // Geocode the location to get coordinates
+      if (window.google?.maps?.Geocoder) {
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ address: suggestion }, (results, status) => {
+          if (status === 'OK' && results[0]?.geometry?.location) {
+            const latLng = results[0].geometry.location.toJSON();
+            setCoordinates(latLng);
+            form.setValue(coordinatesFieldName, latLng);
+          }
+        });
+      }
+    }
   };
 
   return (
@@ -98,6 +145,13 @@ export default function LocationFormField({
             <SuggestionsList 
               suggestions={suggestions}
               onSelect={handleSuggestionSelect}
+            />
+          )}
+          
+          {showMap && field.value && (
+            <MapPreview 
+              location={field.value} 
+              coordinates={coordinates}
             />
           )}
           

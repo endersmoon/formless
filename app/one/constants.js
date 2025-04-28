@@ -31,3 +31,59 @@ export const LOCATION_SUGGESTIONS = [
   'Mumbai, India',
   'Singapore'
 ]; 
+
+// Job type options
+export const JOB_TYPES = [
+  'Full time',
+  'Part time'
+];
+
+// Job type suggestions
+export const JOB_TYPE_SUGGESTIONS = JOB_TYPES;
+
+// Work location options
+export const WORK_LOCATIONS = [
+  'Work from office',
+  'Field job',
+  'Work from home'
+];
+
+// Work location suggestions
+export const WORK_LOCATION_SUGGESTIONS = WORK_LOCATIONS;
+
+// Shift options
+export const SHIFTS = [
+  'Day',
+  'Night',
+  'Rotational',
+  'Flexible'
+];
+
+// Shift suggestions
+export const SHIFT_SUGGESTIONS = SHIFTS;
+
+// Working days options
+export const WORKING_DAYS = [
+  '5 days',
+  '6 days',
+  'Other'
+];
+
+// Working days suggestions
+export const WORKING_DAYS_SUGGESTIONS = WORKING_DAYS;
+
+// Salary suggestions
+export const SALARY_SUGGESTIONS = [10000, 15000, 20000, 25000, 30000];
+
+// Benefits options
+export const BENEFITS = [
+  'Cab',
+  'Meal',
+  'Medical',
+  'Insurance',
+  'PF',
+  'Other'
+];
+
+// Benefits suggestions
+export const BENEFITS_SUGGESTIONS = BENEFITS; 
