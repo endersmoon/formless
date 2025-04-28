@@ -7,12 +7,13 @@ import * as React from 'react';
 import occupation from './occupation';
 import jobCategories from './categories';
 import { findMatchingCategory } from './utils/categoryMatcher';
-import { JOB_TITLE_SUGGESTIONS, JOB_CATEGORY_SUGGESTIONS, JOB_OPENINGS_SUGGESTIONS } from './constants';
+import { JOB_TITLE_SUGGESTIONS, JOB_CATEGORY_SUGGESTIONS, JOB_OPENINGS_SUGGESTIONS, LOCATION_SUGGESTIONS } from './constants';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import JobFormField from './components/JobFormField';
 import NumberFormField from './components/NumberFormField';
+import LocationFormField from './components/LocationFormField';
 
 // Validation schema
 const formSchema = z.object({
@@ -27,6 +28,9 @@ const formSchema = z.object({
   }).max(99, {
     message: 'Number of openings cannot exceed 99.',
   }),
+  location: z.string().min(2, {
+    message: 'Location must be at least 2 characters.',
+  }),
 });
 
 export default function ApproachOne() {
@@ -36,6 +40,7 @@ export default function ApproachOne() {
       jobTitle: '',
       jobCategory: '',
       jobOpenings: 1,
+      location: '',
     },
   });
   
@@ -92,6 +97,15 @@ export default function ApproachOne() {
             name="jobOpenings"
             label="Number of Openings"
             suggestions={JOB_OPENINGS_SUGGESTIONS}
+          />
+          
+          {/* Location Field */}
+          <LocationFormField
+            form={form}
+            name="location"
+            label="Job Location"
+            suggestions={LOCATION_SUGGESTIONS}
+            placeholder="Enter job location"
           />
           
           <Button type='submit'>Submit</Button>

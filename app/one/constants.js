@@ -22,3 +22,12 @@ export const JOB_CATEGORY_SUGGESTIONS = [
 
 // Job openings suggestions for quick selection
 export const JOB_OPENINGS_SUGGESTIONS = [1, 2, 5, 10, 20]; 
+
+// Location suggestions for quick selection
+export const LOCATION_SUGGESTIONS = [
+  'New York, NY',
+  'San Francisco, CA',
+  'London, UK',
+  'Mumbai, India',
+  'Singapore'
+]; 
