@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
 import occupation from './occupation';
+import jobCategories from './categories';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -59,6 +60,49 @@ export default function ApproachOne() {
   
   // Add state for Popover
   const [open, setOpen] = React.useState(false);
+  const [categoryOpen, setCategoryOpen] = React.useState(false);
+
+  // Function to suggest a matching category based on job title
+  const findMatchingCategory = (title) => {
+    const titleLower = title.toLowerCase();
+    
+    // Map of keywords to categories
+    const categoryMapping = {
+      'sales': 'Sales / Business Development',
+      'marketing': 'Marketing',
+      'customer': 'Customer Support / TeleCaller',
+      'support': 'Customer Support / TeleCaller',
+      'telecaller': 'Customer Support / TeleCaller',
+      'call': 'Customer Support / TeleCaller',
+      'tele': 'Customer Support / TeleCaller',
+      'delivery': 'Delivery',
+      'driver': 'Driver',
+      'tech': 'IT / Hardware / Network Engineer',
+      'developer': 'IT / Hardware / Network Engineer',
+      'engineer': 'IT / Hardware / Network Engineer',
+      'design': 'Graphic / Web Designer',
+      'account': 'Accountant',
+      'admin': 'Recruiter / HR / Admin',
+      'hr': 'Recruiter / HR / Admin',
+      'recruit': 'Recruiter / HR / Admin',
+      'data': 'Back Office / Data Entry',
+      'entry': 'Back Office / Data Entry',
+      'warehouse': 'Warehouse / Logistics',
+      'logistics': 'Warehouse / Logistics',
+      'chef': 'Cook / Chef',
+      'cook': 'Cook / Chef',
+    };
+    
+    // Find a match from the mapping
+    for (const [keyword, category] of Object.entries(categoryMapping)) {
+      if (titleLower.includes(keyword)) {
+        return category;
+      }
+    }
+    
+    // Return null if no match found
+    return null;
+  };
 
   // 2. Define a submit handler.
   function onSubmit(values) {
@@ -106,6 +150,12 @@ export default function ApproachOne() {
                               key={job}
                               onSelect={() => {
                                 form.setValue('jobTitle', job);
+                                // Auto-select category based on job title
+                                const suggestedCategory = findMatchingCategory(job);
+                                if (suggestedCategory) {
+                                  form.setValue('jobCategory', suggestedCategory);
+                                  form.trigger('jobCategory');
+                                }
                                 // Close the popover after selection
                                 setOpen(false);
                               }}>
@@ -126,6 +176,29 @@ export default function ApproachOne() {
                   </PopoverContent>
                 </Popover>
                
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {['Telecaller', 'Field Sales Executive', 'Delivery Boy', 'Customer Support Executive', 'Accountant'].map((suggestion) => (
+                    <Button
+                      key={suggestion}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs px-3 py-1 h-auto"
+                      onClick={() => {
+                        form.setValue('jobTitle', suggestion);
+                        // Also auto-select category for quick buttons
+                        const suggestedCategory = findMatchingCategory(suggestion);
+                        if (suggestedCategory) {
+                          form.setValue('jobCategory', suggestedCategory);
+                          form.trigger('jobCategory');
+                        }
+                        form.trigger('jobTitle');
+                      }}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -136,10 +209,70 @@ export default function ApproachOne() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Job Category</FormLabel>
-                <FormControl>
-                  <Input placeholder='Technology' {...field} />
-                </FormControl>
-               
+                <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant='outline'
+                        role='combobox'
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}>
+                        {field.value
+                          ? jobCategories.find((category) => category.name === field.value)?.name
+                          : 'Select job category'}
+                        <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-full p-0'>
+                    <Command>
+                      <CommandInput placeholder='Search job category...' />
+                      <CommandList>
+                        <CommandEmpty>No job category found.</CommandEmpty>
+                        <CommandGroup className='max-h-60 overflow-y-auto'>
+                          {jobCategories.slice(1).map((category) => (
+                            <CommandItem
+                              value={category.name}
+                              key={category.id}
+                              onSelect={() => {
+                                form.setValue('jobCategory', category.name);
+                                setCategoryOpen(false);
+                              }}>
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  category.name === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {category.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {['Customer Support / TeleCaller', 'Sales / Business Development', 'Delivery', 'Retail / Counter Sales', 'Marketing'].map((suggestion) => (
+                    <Button
+                      key={suggestion}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs px-3 py-1 h-auto"
+                      onClick={() => {
+                        form.setValue('jobCategory', suggestion);
+                        form.trigger('jobCategory');
+                      }}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -158,9 +291,24 @@ export default function ApproachOne() {
                     onChange={(e) => field.onChange(parseInt(e.target.value))}
                   />
                 </FormControl>
-                <FormDescription>
-                  Number of positions available.
-                </FormDescription>
+              
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {[1, 2, 5, 10, 20].map((suggestion) => (
+                    <Button
+                      key={suggestion}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full text-xs px-3 py-1 h-auto"
+                      onClick={() => {
+                        form.setValue('jobOpenings', suggestion);
+                        form.trigger('jobOpenings');
+                      }}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
