@@ -1,38 +1,55 @@
 "use client"
-import { Briefcase, BriefcaseIcon, User, Calendar, CreditCard } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
+import { Briefcase, BriefcaseIcon, User, Calendar, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BasicForm } from './components/BasicForm';
+
+const tabs = [
+  { 
+    name: 'Job Info', 
+    icon: BriefcaseIcon,
+    content: <div>Candidates Form Content</div>
+  },
+  
+  { 
+    name: 'Candidate Info', 
+    icon: User,
+    content: <div>Candidates Form Content</div>
+  },
+  { 
+    name: 'Pre Screening', 
+    icon: Calendar,
+    content: <div>Interview Form Content</div>
+  },
+  { 
+    name: 'Confirmation', 
+    icon: Calendar,
+    content: <div>Interview Form Content</div>
+  },
+  
+];
 
 export default function One() {
   const [activeTab, setActiveTab] = useState(0);
   
-  const tabs = [
-    { name: 'Basic', icon: BriefcaseIcon },
-    { name: 'Jobs', icon: Briefcase },
-    { name: 'Candidates', icon: User },
-    { name: 'Interview', icon: Calendar },
-    { name: 'Deposits', icon: CreditCard },
-  ];
-
   return (
     <div>
-      <div className='border-b flex gap-3 items-center overflow-x-auto'>
+      <div className='border-b flex  items-center overflow-x-auto bg-background'>
         {tabs.map((tab, index) => (
           <div 
             key={index}
             onClick={() => setActiveTab(index)}
             className={cn(
-              'flex flex-1 items-center gap-3 pr-3 p-3 cursor-pointer',
+              'flex flex-1 items-center   h-18 cursor-pointer',
               index < tabs.length - 1 && 'border-r',
               activeTab === index && 'border-b-2 border-b-primary'
             )}
           >
-            <div className='w-10 h-10 rounded-md bg-muted flex items-center justify-center'>
-              <tab.icon className='w-6 h-6' />
+            <div className='hidden w-10 h-10 ml-3 rounded-md bg-muted md:flex items-center justify-center'>
+              <tab.icon className='w-6 h-6 ' />
             </div>
 
-            <div>
+            <div className='ml-3'>
               <p className='text-xs text-muted-foreground'>Step {index + 1}</p>
               <p className='text-sm font-medium'>{tab.name}</p>
             </div>
@@ -41,11 +58,7 @@ export default function One() {
       </div>
       
       <div className='mx-auto max-w-[720px] p-4'>
-        {activeTab === 0 && <div>Basic Form Content</div>}
-        {activeTab === 1 && <div>Jobs Form Content</div>}
-        {activeTab === 2 && <div>Candidates Form Content</div>}
-        {activeTab === 3 && <div>Interview Form Content</div>}
-        {activeTab === 4 && <div>Deposits Form Content</div>}
+        {tabs[activeTab].content}
       </div>
     </div>
   );
