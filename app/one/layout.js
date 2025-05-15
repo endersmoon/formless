@@ -16,13 +16,10 @@ export default function Layout({ children }) {
            
           </div>
         </div>
-        <div className=' flex items-center justify-center p-3'>
-        <div className='mockup-phone h-[812px] w-[390px]  '>
-              <div className='mockup-phone-camera'></div>
-              <div className='mockup-phone-display text-white grid place-content-center'>
-                It's Glowtime.
-              </div>
-            </div>
+        <div className=' flex items-center justify-center p-12'>
+       <div className='bg-blue-50 rounded-md  w-[360px] h-[640px]'>
+one
+       </div>
         </div>
       </div>
     </div>

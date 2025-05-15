@@ -83,6 +83,16 @@ import {
           </div>
         </div>
   
+        {/* Age Section */}
+        <div>
+          <h2 className="text-sm font-semibold">Age</h2>
+          <div className="flex gap-2 mt-3 items-center">
+            <Input type="number" placeholder="Min Age" className="w-32" defaultValue={18} />
+            <span className="text-sm">to</span>
+            <Input type="number" placeholder="Max Age" className="w-32" />
+          </div>
+        </div>
+  
         <div>
           <h2 className="text-sm font-semibold">Industry</h2>
           <div className="flex flex-wrap gap-2 mt-3">
