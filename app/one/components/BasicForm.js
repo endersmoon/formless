@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Command,
   CommandEmpty,
@@ -92,6 +93,122 @@ export const BasicForm = () => {
                   {cat}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Number of Openings */}
+        <div className="space-y-2">
+          <Label htmlFor="openings">Number of Openings</Label>
+          <Input
+            type="number"
+            id="openings"
+            placeholder="Enter number of positions"
+            min="1"
+          />
+        </div>
+
+        {/* Job Type */}
+        <div className="space-y-2">
+          <Label htmlFor="job-type">Job Type</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select job type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="full-time">Full Time</SelectItem>
+              <SelectItem value="part-time">Part Time</SelectItem>
+              <SelectItem value="contract">Contract</SelectItem>
+              <SelectItem value="temporary">Temporary</SelectItem>
+              <SelectItem value="internship">Internship</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Work Location */}
+        <div className="space-y-2">
+          <Label htmlFor="work-location">Work Location</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select work location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="onsite">On-site</SelectItem>
+              <SelectItem value="remote">Remote</SelectItem>
+              <SelectItem value="hybrid">Hybrid</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* City */}
+        <div className="space-y-2">
+          <Label htmlFor="city">City</Label>
+          <Input
+            type="text"
+            id="city"
+            placeholder="Enter city"
+          />
+        </div>
+
+        {/* Locality */}
+        <div className="space-y-2">
+          <Label htmlFor="locality">Locality</Label>
+          <Input
+            type="text"
+            id="locality"
+            placeholder="Enter locality/area"
+          />
+        </div>
+
+        {/* Salary */}
+        <div className="space-y-2">
+          <Label htmlFor="salary">Salary Range</Label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              id="salary-min"
+              placeholder="Min"
+            />
+            <Input
+              type="number"
+              id="salary-max"
+              placeholder="Max"
+            />
+          </div>
+        </div>
+
+        {/* Benefits */}
+        <div className="space-y-2">
+          <Label htmlFor="benefits">Benefits</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select benefits" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="health-insurance">Health Insurance</SelectItem>
+              <SelectItem value="dental-insurance">Dental Insurance</SelectItem>
+              <SelectItem value="vision-insurance">Vision Insurance</SelectItem>
+              <SelectItem value="life-insurance">Life Insurance</SelectItem>
+              <SelectItem value="401k">401(k)</SelectItem>
+              <SelectItem value="paid-time-off">Paid Time Off</SelectItem>
+              <SelectItem value="flexible-schedule">Flexible Schedule</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Shifts */}
+        <div className="space-y-2">
+          <Label htmlFor="shifts">Shifts</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select shift" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="day">Day Shift</SelectItem>
+              <SelectItem value="night">Night Shift</SelectItem>
+              <SelectItem value="evening">Evening Shift</SelectItem>
+              <SelectItem value="rotating">Rotating Shift</SelectItem>
+              <SelectItem value="flexible">Flexible Hours</SelectItem>
             </SelectContent>
           </Select>
         </div>
