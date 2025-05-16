@@ -11,36 +11,17 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { LocationField } from './LocationField';
 
-const jobCategories = [
-  {
-    id: 1,
-    name: 'Tele Caller',
-    icon: Phone,
-  },
-  {
-    id: 2,
-    name: 'Delivery Boy',
-    icon: Box,
-  },
-  {
-    id: 3,
-    name: 'Driver',
-    icon: Car,
-  },
-  {
-    id: 4,
-    name: 'Picker/Packer',
-    icon: Package,
-  },
-  {
-    id: 5,
-    name: 'Security Guard',
-    icon: Shield,
-  },
-];
+
+import { JOB_CATEGORIES } from '../constants';
+
+const iconMap = {
+  Phone,
+  Box,
+  Car,
+  Package,
+  Shield,
+};
 
 let JobInfo = () => {
   const [depositRequired, setDepositRequired] = useState('no');
@@ -50,8 +31,26 @@ let JobInfo = () => {
   const [workingDays, setWorkingDays] = useState('');
 
   return (
-    <div className='  space-y-12'>
-    
+    <div className='space-y-12'>
+      <div>
+        <h2 className='text-sm font-semibold'>Job Title</h2>
+        <Input type='text' placeholder='Job Title' className='mt-3' />
+        <ToggleGroup type='single' className='grid grid-cols-5 gap-2 mt-3'>
+          {JOB_CATEGORIES.map((category) => {
+            const Icon = iconMap[category.icon];
+            return (
+              <ToggleGroupItem
+                key={category.id}
+                value={category.id}
+                size={"sm"}
+                className='col-span-1 border rounded-md p-2 gap-2 flex items-center justify-center hover:bg-muted cursor-pointer'>
+                <Icon className='size-4' />
+                <div className='text-center text-sm'>{category.name}</div>
+              </ToggleGroupItem>
+            );
+          })}
+        </ToggleGroup>
+      </div>
 
       <div className="space-y-2">
         <h2 className="text-sm font-semibold">Salary & benefits <span className="text-red-500">*</span></h2>
@@ -162,7 +161,7 @@ let JobInfo = () => {
               <Label htmlFor="walkin-date">Date</Label>
               <Input type="date" id="walkin-date" className="w-80" />
               <Label>Location</Label>
-              <LocationField value={walkinLocation} onChange={setWalkinLocation} />
+              
             </div>
           )}
         </div>

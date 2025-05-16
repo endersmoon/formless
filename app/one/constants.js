@@ -86,4 +86,33 @@ export const BENEFITS = [
 ];
 
 // Benefits suggestions
-export const BENEFITS_SUGGESTIONS = BENEFITS; 
+export const BENEFITS_SUGGESTIONS = BENEFITS;
+
+// Job categories
+export const JOB_CATEGORIES = [
+  {
+    id: 1,
+    name: 'Tele Caller',
+    icon: 'Phone',
+  },
+  {
+    id: 2,
+    name: 'Delivery Boy',
+    icon: 'Box',
+  },
+  {
+    id: 3,
+    name: 'Driver',
+    icon: 'Car',
+  },
+  {
+    id: 4,
+    name: 'Picker/Packer',
+    icon: 'Package',
+  },
+  {
+    id: 5,
+    name: 'Security Guard',
+    icon: 'Shield',
+  },
+]; 

@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -17,20 +16,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useJobTitleSearch } from '../hooks/useJobTitleSearch';
+import { Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import jobCategories from '../../job_cat.json';
 
 export const BasicForm = () => {
-  const {
-    title,
-    setTitle,
-    category,
-    setCategory,
-    filteredTitles,
-    showTitleDropdown,
-    setShowTitleDropdown,
-    handleTitleSelect,
-    categories
-  } = useJobTitleSearch();
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [filteredTitles, setFilteredTitles] = useState([]);
+  const [showTitleDropdown, setShowTitleDropdown] = useState(false);
+
+  // Get all unique job titles from all categories
+  const allJobTitles = Object.values(jobCategories).flat();
+
+  // Get unique categories
+  const categories = Object.keys(jobCategories);
+
+  // Filter job titles based on input
+  useEffect(() => {
+    if (title) {
+      const filtered = allJobTitles.filter(jobTitle => 
+        jobTitle.toLowerCase().includes(title.toLowerCase())
+      );
+      setFilteredTitles(filtered);
+    } else {
+      setFilteredTitles([]);
+    }
+  }, [title]);
+
+  // Handle job title selection
+  const handleTitleSelect = (selectedTitle) => {
+    setTitle(selectedTitle);
+    setShowTitleDropdown(false);
+    
+    // Find the category for the selected title
+    for (const [cat, titles] of Object.entries(jobCategories)) {
+      if (titles.includes(selectedTitle)) {
+        setCategory(cat);
+        break;
+      }
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-xl">
@@ -51,7 +77,7 @@ export const BasicForm = () => {
                 }}
                 className="h-9"
               />
-              {title && (
+              {title && showTitleDropdown && (
                 <CommandList>
                   <CommandEmpty>No job title found.</CommandEmpty>
                   <CommandGroup heading="Suggestions">
@@ -215,4 +241,4 @@ export const BasicForm = () => {
       </div>
     </div>
   );
-}; 
+};
