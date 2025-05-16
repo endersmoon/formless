@@ -33,11 +33,7 @@ const tabs = [
     icon: User,
     content: <CandidateInfo />,
   },
-  {
-    name: 'Pre Screening',
-    icon: Calendar,
-    content: <div>Interview Form Content</div>,
-  },
+
   {
     name: 'Confirmation',
     icon: Calendar,
@@ -61,7 +57,7 @@ export default function One() {
                 index < tabs.length - 1 && 'border-r',
                 activeTab === index && 'border-b-2 border-b-primary'
               )}>
-              <div className='hidden w-10 h-10 ml-3 rounded-md bg-muted md:flex items-center justify-center'>
+              <div className='hidden w-10 h-10 ml-6 rounded-md bg-muted md:flex items-center justify-center'>
                 <tab.icon className='w-6 h-6 ' />
               </div>
 
@@ -79,13 +75,13 @@ export default function One() {
           {tabs[activeTab].content}
         </div>
       </div>
-      <div className=' w-full h-18 bg-background border-t flex items-center justify-between px-6'>
+      <div className=' w-full h-18 bg-background border-t flex items-center justify-between px-6 py-6 sticky bottom-0'>
         <div className='flex items-center'>
           <Button variant='outline'>
             Reset
           </Button>
         </div>
-        <Button variant='outline'>
+        <Button >
             Save & Continue
           </Button>
       </div>
