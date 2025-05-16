@@ -12,8 +12,9 @@ import {
   import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
   import { Input } from '@/components/ui/input';
   import { JOB_CATEGORIES } from '../constants';
-  import { useState, useEffect, createContext, useContext } from 'react';
+  import { useState, useEffect, createContext, useContext, useRef } from 'react';
   import jobCategories from '../../job_cat.json';
+  import { useGoogleMaps } from '../hooks/useGoogleMaps';
   
   const iconMap = {
     Phone,
@@ -31,7 +32,106 @@ import {
 
   // Flatten all job titles into a single array
   const allJobTitles = Object.values(jobCategories).flat();
-  
+
+  // Location Autocomplete with Map Preview component
+  const LocationAutocomplete = ({ value, onChange }) => {
+    const inputRef = useRef(null);
+    const mapRef = useRef(null);
+    const autocompleteRef = useRef(null);
+    const mapInstanceRef = useRef(null);
+    const markerRef = useRef(null);
+    const isGoogleMapsLoaded = useGoogleMaps();
+
+    useEffect(() => {
+      let mounted = true;
+
+      const initializeMap = async () => {
+        if (!isGoogleMapsLoaded || !mounted || !inputRef.current || !mapRef.current) return;
+
+        try {
+          // Initialize autocomplete
+          autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+            types: ['address'],
+            fields: ['address_components', 'formatted_address', 'geometry'],
+          });
+
+          // Initialize map
+          mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+            zoom: 15,
+            center: { lat: 20.5937, lng: 78.9629 }, // Center of India
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
+          });
+
+          // Initialize marker
+          markerRef.current = new window.google.maps.Marker({
+            map: mapInstanceRef.current,
+            animation: window.google.maps.Animation.DROP,
+          });
+
+          // Handle place selection
+          autocompleteRef.current.addListener('place_changed', () => {
+            const place = autocompleteRef.current.getPlace();
+            
+            if (!place.geometry) return;
+
+            // Update map
+            mapInstanceRef.current.setCenter(place.geometry.location);
+            markerRef.current.setPosition(place.geometry.location);
+
+            // Extract location details
+            let city = '';
+            let locality = '';
+            let formattedAddress = place.formatted_address;
+
+            for (const component of place.address_components) {
+              if (component.types.includes('locality')) {
+                city = component.long_name;
+              }
+              if (component.types.includes('sublocality_level_1')) {
+                locality = component.long_name;
+              }
+            }
+
+            onChange({
+              city,
+              locality,
+              formattedAddress,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            });
+          });
+        } catch (error) {
+          console.error('Error initializing Google Maps:', error);
+        }
+      };
+
+      initializeMap();
+
+      return () => {
+        mounted = false;
+      };
+    }, [isGoogleMapsLoaded, onChange]);
+
+    return (
+      <div className="space-y-3">
+        <Input
+          ref={inputRef}
+          type="text"
+          placeholder="Enter location"
+          className="mt-3"
+          value={value.formattedAddress || ''}
+          onChange={(e) => onChange({ ...value, formattedAddress: e.target.value })}
+        />
+        <div 
+          ref={mapRef} 
+          className="w-full h-[200px] rounded-lg border border-gray-200"
+        />
+      </div>
+    );
+  };
+
   let JobInfo = () => {
     const [jobTitle, setJobTitle] = useState('');
     const [jobCategory, setJobCategory] = useState('');
@@ -42,8 +142,13 @@ import {
     const [openingsCount, setOpeningsCount] = useState('');
     const [jobType, setJobType] = useState('');
     const [workLocation, setWorkLocation] = useState('');
-    const [city, setCity] = useState('');
-    const [locality, setLocality] = useState('');
+    const [location, setLocation] = useState({
+      city: '',
+      locality: '',
+      formattedAddress: '',
+      lat: null,
+      lng: null
+    });
 
     // Get context with safe destructuring
     const context = useContext(JobContext);
@@ -58,11 +163,16 @@ import {
           openings: openingsCount,
           type: jobType,
           location: workLocation,
-          city,
-          locality
+          city: location.city,
+          locality: location.locality,
+          formattedAddress: location.formattedAddress,
+          coordinates: location.lat && location.lng ? {
+            lat: location.lat,
+            lng: location.lng
+          } : null
         });
       }
-    }, [jobTitle, jobCategory, openingsCount, jobType, workLocation, city, locality, setJobData]);
+    }, [jobTitle, jobCategory, openingsCount, jobType, workLocation, location, setJobData]);
 
     useEffect(() => {
       if (jobTitle.trim()) {
@@ -254,30 +364,16 @@ import {
             ))}
           </ToggleGroup>
         </div>
-  
-        <div className='grid grid-cols-2 gap-4'>
+
+        {workLocation !== 'Work From Home' && (
           <div>
-            <h2 className='text-sm font-semibold'>City</h2>
-            <Input 
-              type='text' 
-              placeholder='Enter city' 
-              className='mt-3'
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+            <h2 className='text-sm font-semibold'>Location</h2>
+            <LocationAutocomplete
+              value={location}
+              onChange={setLocation}
             />
           </div>
-          <div>
-            <h2 className='text-sm font-semibold'>Locality</h2>
-            <Input 
-              type='text' 
-              placeholder='Enter locality' 
-              className='mt-3'
-              value={locality}
-              onChange={(e) => setLocality(e.target.value)}
-            />
-          </div>
-        </div>
-  
+        )}
       </div>
     );
   };

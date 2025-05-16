@@ -13,7 +13,8 @@ export default function Layout({ children }) {
     type: '',
     location: '',
     city: '',
-    locality: ''
+    locality: '',
+    formattedAddress: ''
   });
 
   // Memoize the context value to prevent unnecessary re-renders
@@ -58,23 +59,28 @@ export default function Layout({ children }) {
                   <Clock className='w-4 h-4' />
                   <span>{jobData.type || 'Job type not specified'}</span>
                 </div>
-                <div className='flex items-center gap-2 text-sm text-gray-600'>
-                  <MapPin className='w-4 h-4' />
-                  <span>
-                    {jobData.location ? (
-                      <>
-                        {jobData.location}
-                        {(jobData.city || jobData.locality) && (
-                          <span className='text-gray-500'>
-                            {' • '}
-                            {[jobData.city, jobData.locality].filter(Boolean).join(', ')}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      'Location not specified'
+                <div className='flex items-start gap-2 text-sm text-gray-600'>
+                  <MapPin className='w-4 h-4 mt-0.5' />
+                  <div className='space-y-1'>
+                    <span>
+                      {jobData.location ? (
+                        <>
+                          {jobData.location}
+                          {(jobData.city || jobData.locality) && (
+                            <span className='text-gray-500'>
+                              {' • '}
+                              {[jobData.city, jobData.locality].filter(Boolean).join(', ')}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        'Location not specified'
+                      )}
+                    </span>
+                    {jobData.formattedAddress && (
+                      <p className='text-gray-500 text-xs'>{jobData.formattedAddress}</p>
                     )}
-                  </span>
+                  </div>
                 </div>
               </div>
 
